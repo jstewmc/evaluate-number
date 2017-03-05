@@ -28,7 +28,7 @@ $service('3\2');           // returns (float) 1.5
 $service('1000');          // returns (int) 1000
 $service('1,000');         // returns (int) 1000
 $service('1,000.5');       // returns (float) 1000.5
-$service('1st');            // returns (int) 1
+$service('1st');           // returns (int) 1
 $service('second');        // returns (int) 2
 $service('one hundred');   // returns (int) 100
 $service('10%');           // returns (float) 0.1
@@ -148,7 +148,7 @@ That's about it!
 
 ## Author
 
-[Jack Clayton](clayjs0@gmail.com)
+[Jack Clayton](mailto:clayjs0@gmail.com)
 
 ## License
 
