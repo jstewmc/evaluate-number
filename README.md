@@ -3,7 +3,7 @@
 Evaluate a variety of US number formats to their integer or float equivalent including: 
 
 * fractions (e.g., `'1/2'`), 
-* mixed numbers (e.g., `'1 1/2`), 
+* mixed numbers (e.g., `'1 1/2'`), 
 * comma-separated values (e.g., `'1,000'`), 
 * ordinal numbers (e.g., `'first'`), 
 * cardinal numbers (e.g., `'one hundred'`),
@@ -28,7 +28,7 @@ $service('3\2');           // returns (float) 1.5
 $service('1000');          // returns (int) 1000
 $service('1,000');         // returns (int) 1000
 $service('1,000.5');       // returns (float) 1000.5
-$service('1st);            // returns (int) 1
+$service('1st');            // returns (int) 1
 $service('second');        // returns (int) 2
 $service('one hundred');   // returns (int) 100
 $service('10%');           // returns (float) 0.1
