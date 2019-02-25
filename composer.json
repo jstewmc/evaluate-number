@@ -2,19 +2,20 @@
 	"name": "jstewmc/evaluate-number",
 	"description": "Evaluate a variety of number formats to integers and floats",
 	"keywords": [
-		"php", 
-		"jstewmc", 
-		"evaluate", 
+		"php",
+		"jstewmc",
+		"evaluate",
 		"number"
 	],
 	"license": "MIT",
 	"authors": [
 		{
 			"name": "Jack Clayton",
-			"email": "clayjs0@gmail.com"	
+			"email": "clayjs0@gmail.com"
 		}
 	],
 	"require": {
+        "jstewmc/gravity": "^0.1",
 		"php": "^7.0"
 	},
 	"require-dev": {
