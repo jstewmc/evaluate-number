@@ -17,13 +17,13 @@ namespace Jstewmc\EvaluateNumber;
 class EvaluateNumber
 {
     /* !Constants */
-	
+
 	/**
 	 * @var    int[]  an array of cardinal numbers (e.g., "one", "two", etc)
 	 * @since  0.1.0
 	 */
 	const CARDINALS = [
-		'one'       => 1, 
+		'one'       => 1,
 		'two'       => 2,
 		'three'     => 3,
 		'four'      => 4,
@@ -51,7 +51,7 @@ class EvaluateNumber
 		'eighty'    => 80,
 		'ninety'    => 90
 	];
-	
+
 	/**
 	 * @var    int[]  an array of ordinal numbers (e.g., "first", "second", etc)
 	 * @since  0.1.0
@@ -85,7 +85,7 @@ class EvaluateNumber
 		'eightieth'   => 80,
 		'ninetieth'   => 90
 	];
-	
+
 	/**
 	 * @var    int[]  an array of powers
 	 * @since  0.1.0
@@ -96,16 +96,16 @@ class EvaluateNumber
 		'million'  => 1000000,
 		'billion'  => 1000000000
 	];
-	
+
 	/**
 	 * @var    string[]  an array of number suffixes
 	 * @since  0.1.0
 	 */
 	const SUFFIXES = ['th', 'st', 'nd', 'rd', 'rst'];
-    
-    
+
+
     /* !Magic methods */
-    
+
     /**
      * Called when the service is treated like a function
      *
@@ -126,13 +126,13 @@ class EvaluateNumber
         } elseif (is_bool($value)) {
             $number = $this->evaluateBool($value);
         }
-        
+
         return $number;
     }
-    
-    
+
+
     /* !Private methods */
-    
+
     /**
      * Evaluates an array
      *
@@ -146,7 +146,7 @@ class EvaluateNumber
     {
         return min(count($value), 1);
     }
-    
+
     /**
      * Evaluates a boolean
      *
@@ -160,10 +160,10 @@ class EvaluateNumber
     {
         return (int) $value;
     }
-    
+
     /**
 	 * Evaluates a currency string (e.g., "$100")
-	 * 
+	 *
 	 * @param   string  $value  the value to evaluate
 	 * @return  int|float|false
 	 * @since   0.1.0
@@ -174,18 +174,18 @@ class EvaluateNumber
 		if (substr($value, 0, 1) !== '$') {
 			return false;
 		}
-		
+
 		// otherwise, re-evaluate the number less the dollar sign
 		return $this(substr($value, 1));
     }
-    
+
     /**
      * Evaluates a mixed number (e.g., "1 1/2")
      *
      * @param   string  $value
      * @return  float|false
      * @see  http://stackoverflow.com/a/5264255  Pascal MARTIN's answer to "Convert
-	 *    mixed fraction string to float in PHP" on StackOverflow (edited to allow 
+	 *    mixed fraction string to float in PHP" on StackOverflow (edited to allow
 	 *    back- or forward-slashes in fractions) (accessed 2/12/17)
      * @since   0.1.0
      */
@@ -195,13 +195,13 @@ class EvaluateNumber
         if ( ! preg_match('#^((\d+)\s+)?(\d+)[/\\\](\d+)$#', $value, $matches)) {
             return false;
         }
-        
+
         // otherwise, evaluate the parts of the mixed number
-        $number = $matches[2] + $matches[3] / $matches[4];
-        
+        $number = (int)$matches[2] + (int)$matches[3] / (int)$matches[4];
+
         return $number;
     }
-    
+
     /**
      * Evaluates an int, float, or numeric string (e.g., 1, 1.0, "1")
      *
@@ -213,7 +213,7 @@ class EvaluateNumber
     {
         return +$value;
     }
-    
+
     /**
      * Evaluates a named number (e.g., "one hundred")
      *
@@ -228,57 +228,57 @@ class EvaluateNumber
     {
         // lower-case the value
         $value = strtolower($value);
-        
+
         // remove commas
         $value = str_replace(',', '', $value);
-        
+
         // replace "-" and " and " with spaces
         $value = str_replace(['-', ' and '], ' ', $value);
-        
+
         // explode on the space character
         $words = explode(' ', $value);
-        
+
         // trim the words
         $words = array_map('trim', $words);
-        
+
         // filter the words
         $words = array_filter($words);
-        
+
         // get the possible number names
         $names = array_merge(
-            array_keys(self::CARDINALS), 
-            array_keys(self::ORDINALS), 
+            array_keys(self::CARDINALS),
+            array_keys(self::ORDINALS),
             array_keys(self::POWERS)
         );
-        
+
         // if the value is composed of non-number names, short-circuit
         if (count(array_diff($words, $names))) {
             return false;
         }
-        
-        // otherwise, return to the (clean) value and replace the words with their 
+
+        // otherwise, return to the (clean) value and replace the words with their
         //     numeric values
         //
         $value = strtr(
             $value,
 			array_merge(
-				self::CARDINALS, 
+				self::CARDINALS,
 				self::ORDINALS,
 				self::POWERS
 			)
 		);
-		
+
 		// split the string on one or more spaces
 		$numbers = preg_split('/[\s-]+/', $value);
-		
+
     	// convert the numeric values to integers
         $numbers = array_map('intval', $numbers);
-        
-        // define our loop variables        
+
+        // define our loop variables
 	    $stack = new \SplStack();  // the current work stack
 	    $sum   = 0;                // the running total
 	    $last  = null;             // the last part
-					
+
 		// loop through the numbers
 	    foreach ($numbers as $number) {
 	    	// if the stack isn't empty
@@ -305,19 +305,19 @@ class EvaluateNumber
 	            // this is the first element of a new phrase
 	            $stack->push($number);
 	        }
-	
+
 	        // store the last number
 	        $last = $number;
 	    }
-	
+
 	    return $sum + $stack->pop();
 	}
-    
+
     /**
      * Evaluates an object
      *
-     * Honestly, this method SHOULD NOT be used on objects. However, unlike PHP's 
-     * native intval() or floatval() methods, I will not raise an error. I will 
+     * Honestly, this method SHOULD NOT be used on objects. However, unlike PHP's
+     * native intval() or floatval() methods, I will not raise an error. I will
 	 * always evaluate objects to 1.
 	 *
 	 * @param   object  $value  the value to evaluate
@@ -326,9 +326,9 @@ class EvaluateNumber
 	 */
     private function evaluateObject($value): int
     {
-        return 1;    
+        return 1;
     }
-    
+
     /**
 	 * Evaluates a percent string
 	 *
@@ -341,12 +341,12 @@ class EvaluateNumber
         // if the string doesn't end with percent sign, short-circuit
 		if (substr($value, -1) !== '%') {
 			return false;
-		} 
-		
+		}
+
 		// re-evaluate the value without the dollar sign
         return $this(substr($value, 0, -1)) / 100;
     }
-    
+
     /**
      * Evaluates a string value
      *
@@ -361,7 +361,7 @@ class EvaluateNumber
      *
      * All other strings return 0 (like PHP's native intval() functions).
      *
-     * Hmm, I (Jack) can't figure out a better way to do this than to try each 
+     * Hmm, I (Jack) can't figure out a better way to do this than to try each
      * scenario one-at-a-time. For performance's sake, put the most likely scenarios
      * at the top!
      *
@@ -372,18 +372,18 @@ class EvaluateNumber
     private function evaluateString(string $value)
     {
         // trim the value
-        $value = trim($value);	
-        
+        $value = trim($value);
+
         // if the value is an empty string, short-circuit
         if ( ! strlen($value)) {
             return false;
 		}
-		
+
 		// otherwise, attempt to evaluate the string
 		if (false !== ($number = $this->evaluateThousandsSeparatedNumber($value))) {
             return $number;
         } elseif (false !== ($number = $this->evaluateMixedNumber($value))) {
-            return $number;   
+            return $number;
         } elseif (false !== ($number = $this->evaluateNamedNumber($value))) {
             return $number;
         } elseif (false !== ($number = $this->evaluateSuffixedNumber($value))) {
@@ -393,10 +393,10 @@ class EvaluateNumber
         } elseif (false !== ($number = $this->evaluateCurrency($value))) {
 	        return $number;
         }
-        
+
         return 0;
     }
-    
+
     /**
      * Evaluates a suffixed number (e.g., "1st")
      *
@@ -410,36 +410,35 @@ class EvaluateNumber
         if ( ! is_numeric(substr($value, 0, 1))) {
             return false;
         }
-        
+
         // otherwse, get the unique suffix lengths
         $lengths = array_map(function ($suffix) {
             return strlen($suffix);
         }, self::SUFFIXES);
-        
+
         // get the *unique* suffix lengths
         $lengths = array_unique($lengths);
-        
+
         // sort the suffix lengths from longest-to-shortest...
         // otherwise, a shorter suffix (e.g., "st") may take precedence over a
         //     longer, better-matched suffix (e.g., "rst")
         //
         rsort($lengths);
-        
+
         // loop through the suffix lengths
         foreach ($lengths as $length) {
             // get the number's suffix for the length
             $suffix = substr($value, -$length);
             // if *actual* suffix is a *possible* suffix
             if (in_array($suffix, self::SUFFIXES)) {
-                
                 // evaluate the number without the suffix
-                return +substr($value, 0, $length);
-            }   
+                return +substr($value, 0, -$length);
+            }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Evaluates a thousands-separated number (e.g., "1,000")
      *
@@ -457,10 +456,10 @@ class EvaluateNumber
         if ( ! preg_match('#^([1-9](?:\d*|(?:\d{0,2})(?:,\d{3})*)(?:\.\d*[0-9])?|0?\.\d*[0-9]|0)$#', $value)) {
             return false;
         }
-        
+
         // otherwise, strip the commas and evaluate it
         $number = +str_replace(',', '', $value);
-        
+
         return $number;
     }
 }
